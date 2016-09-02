@@ -33,19 +33,26 @@ end
 s.u = {};          % the selected elements of \mathcal{U}
 s.q = {};          % the normalized interpolants
 s.x = zeros(0,2);  % the "magic points" (interpolation points in \Omega)
+s.basis = logical(zeros(length(U_),1));
 
 % the first magic point is kind of a special case.
 [s.u{1}, s.x(1,:)] = choose_next_magic_point(U_, Omega, s);
-s.q{1} = @(X) s.u{1}(X) / s.u{1}(s.x(1,:));
+scale = 1.0 / s.u{1}(s.x(1,:));
+s.q{1} = @(X) s.u{1}(X) / scale;
 
 % compute the remaining magic points and normalized functions
 for k = 2:m
     fprintf('[%s]: choosing magic point %d (of %d)\n', mfilename, k, m);
-    [u_k, x_k] = choose_next_magic_point(U_, Omega, s);
+    [u_k, x_k, worst] = choose_next_magic_point(U_, Omega, s);
+    
+    assert(~s.basis(worst));
+    s.basis(worst) = true;
+    
     I_k = make_interpolant(u_k, s);
     s.u{k} = u_k;
     s.x(k,:) = x_k;
-    s.q{k} = @(X) bsxfun(@rdivide, u_k(X) - I_k(X), u_k(x_k) - I_k(x_k));
+    scale = 1.0 / (u_k(x_k) - I_k(x_k));
+    s.q{k} = @(X) scale*(u_k(X) - I_k(X));
 end
 
 
@@ -55,7 +62,7 @@ f_interp = make_interpolant(v, s);
 
 
 
-function [u_i, x_i] = choose_next_magic_point(U_, Omega, s)
+function [u_i, x_i, k_worst] = choose_next_magic_point(U_, Omega, s)
 % CHOOSE_NEXT_MAGIC_POINT  Select the next magic point from Omega.
 %
 %    U_    := the function space (cell array of function handles)
@@ -71,27 +78,28 @@ function [u_i, x_i] = choose_next_magic_point(U_, Omega, s)
 if isempty(s.q)
     P = abs(apply(U_, Omega));
     [~,idx] = max(P(:));
-    [r,c] = ind2sub(size(Omega), idx);
+    [r,k_worst] = ind2sub(size(Omega), idx);
     x_i = Omega(r,:);
-    u_i = U_{c};
+    u_i = U_{k_worst};
     return
 end
 
 % Find the worst fitting point across all interpolants and use this as
 % the next magic point.
-worst = 0;  x_i = NaN;  u_i = NaN;
+worst = 0;  k_worst = NaN;  x_i = NaN;  u_i = NaN;
 for k = 1:length(U_)
     I_k = make_interpolant(U_{k}, s);
     err_inf = abs(U_{k}(Omega) - I_k(Omega));
     [p_max, idx] = max(err_inf);
     if p_max > worst
         worst = p_max;
+        k_worst = k;
         u_i = U_{k};
         x_i = Omega(idx,:);
     end
 end
 
-assert(~any(isnan(x_i)));
+assert(~isnan(k_worst));
 
 
 
