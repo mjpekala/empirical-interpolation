@@ -21,7 +21,11 @@ U1 = reshape(U_{1}(Omega), n, n);
 figure; surf(X, Y, U1); title('U_1');
 
 % interpolate the function of interest
+tic
 f_interp = interp_magic(f_rescaled, Omega, U_, 10);
+toc
 
 Zhat = reshape(f_interp(Omega), n, n);
 figure; surf(X, Y, Zhat); title('$\hat{f}$', 'interpreter', 'latex');
+
+figure; surf(X, Y, abs(Z-Zhat)), title('error (L2)');
