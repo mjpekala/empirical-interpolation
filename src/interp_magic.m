@@ -1,9 +1,9 @@
 function [f_interp, s] = interp_magic(v, Omega, U_, m)
 % INTERP_MAGIC   Interpolate a scalar-valued function using "magic points"
 %
-%   v    : The function to interpolate.  v : R^d -> R.
-%          This code assumes v can handle vector valued inputs
-%          (e.g. see apply.m)
+%   v     : The function to interpolate.  v : R^d -> R.
+%           This code assumes v can handle vector valued inputs
+%           (e.g. see apply.m)
 %
 %   Omega : a compact subset of R^d over which v will be modeled.
 %           An (m x d) matrix of m points in d dimensions.
@@ -81,8 +81,8 @@ end
 % the next magic point.
 worst = 0;  x_i = NaN;  u_i = NaN;
 for k = 1:length(U_)
-    interp = make_interpolant(U_{k}, s);
-    err_inf = abs(U_{k}(Omega) - interp(Omega));
+    I_k = make_interpolant(U_{k}, s);
+    err_inf = abs(U_{k}(Omega) - I_k(Omega));
     [p_max, idx] = max(err_inf);
     if p_max > worst
         worst = p_max;
@@ -90,6 +90,8 @@ for k = 1:length(U_)
         x_i = Omega(idx,:);
     end
 end
+
+assert(~any(isnan(x_i)));
 
 
 
@@ -108,7 +110,7 @@ assert(m > 0);
 %               to compute any coefficients.
 % See p. 386 in [maday]
 if m == 1
-    v_hat = @(X) v(X).*s.q{1}(X);
+    v_hat = @(X) v(s.x(1,:))*s.q{1}(X);
     return
 end
 
