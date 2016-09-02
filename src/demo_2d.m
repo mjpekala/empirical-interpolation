@@ -20,7 +20,10 @@ toc
 Z = f_rescaled(Omega);
 n = sqrt(length(Z));
 Z = reshape(Z, n, n);
+
+tic
 Zhat = reshape(f_interp(Omega), n, n);
+toc
 
 X = reshape(Omega(:,1), n, n);
 Y = reshape(Omega(:,2), n, n);
