@@ -31,6 +31,7 @@ k = length(f_cell);
 [m,n] = size(X);
 
 A = zeros(m,k);
-parfor kk = 1:k
+%parfor kk = 1:k
+for kk = 1:k
     A(:,kk) = feval(f_cell{kk}, X);
 end
