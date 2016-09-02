@@ -31,14 +31,17 @@ x = -1:delta:1;
 Omega = [X(:) Y(:)];
 
 
-% the code below is just a quick way to enumerate the space:
+% the code below is a way to enumerate the space:
 %   ii+jj <= n      for 0 <= n <= n_max
-Tmp = tril(ones(n_max+1,n_max+1));
-[ii,jj] = ind2sub(size(Tmp), find(Tmp));
+[ii,jj] = ind2sub([n_max+1, n_max+1], find(tril(ones(n_max+1,n_max+1))));
 jj = jj - 1;
 ii = n_max+1-ii;
 assert(length(ii) == m);
-clear Tmp;
+
+% sort (for aesthetics, and so the lowpass filter shows up first)
+s = sum([ii jj], 2);
+[~,idx] = sort(s, 'ascend');
+ii = ii(idx);  jj = jj(idx);
 
 
 W_n = cell(m,1);  % underscore is my notation indicating this is not a matrix
