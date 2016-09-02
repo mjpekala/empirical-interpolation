@@ -120,11 +120,10 @@ end
 % upper triangular part; revisit this later if it turns out to be a
 % performance issue.
 Q = apply(s.q, s.x);
-Q = tril(Q);
 
-% The diagonal of Q should be all 1s; we force this here just in case there are
-% any numerical issues.
-Q(1:m+1:m*m) = 1;
+% These next two statements are not necessary; are entailed by algorithm.
+%Q = tril(Q);
+%Q(1:m+1:m*m) = 1;
 
 % see (3) in [maday]
 % This should be well-conditioned due to structure of Q.
