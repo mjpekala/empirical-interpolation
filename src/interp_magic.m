@@ -35,16 +35,17 @@ s.q = {};          % the normalized interpolants
 s.x = zeros(0,2);  % the "magic points" (interpolation points in \Omega)
 
 % the first magic point is kind of a special case.
-[s.u{1}, s.x{1}] = choose_next_magic_point(U_, Omega, s);
-s.q{1} = @(X) s.u{1}(X) / s.u{1}(s.x{1});
+[s.u{1}, s.x(1,:)] = choose_next_magic_point(U_, Omega, s);
+s.q{1} = @(X) s.u{1}(X) / s.u{1}(s.x(1,:));
 
 % compute the remaining magic points and normalized functions
 for k = 2:m
+    fprintf('[%s]: choosing magic point %d (of %d)\n', mfilename, k, m);
     [u_k, x_k] = choose_next_magic_point(U_, Omega, s);
     I_k = make_interpolant(u_k, s);
     s.u{k} = u_k;
-    s.x{k} = x_k;
-    s.q{k} = @(X) (u_k(X) - I_k(X)) ./ (u_k(x_k) - I_k(x_k));
+    s.x(k,:) = x_k;
+    s.q{k} = @(X) bsxfun(@rdivide, u_k(X) - I_k(X), u_k(x_k) - I_k(x_k));
 end
 
 
@@ -81,8 +82,8 @@ end
 worst = 0;  x_i = NaN;  u_i = NaN;
 for k = 1:length(U_)
     interp = make_interpolant(U_{k}, s);
-    p = interp(Omega);
-    [p_max, idx] = max(p);
+    err_inf = abs(U_{k}(Omega) - interp(Omega));
+    [p_max, idx] = max(err_inf);
     if p_max > worst
         worst = p_max;
         u_i = U_{k};
@@ -100,8 +101,8 @@ function v_hat = make_interpolant(v, s)
 %
     
 m = length(s.q);
-assert(m > 0);
 assert(size(s.x,1) == m);
+assert(m > 0);
 
 % Special case: for a single interpolant there is no need 
 %               to compute any coefficients.
@@ -128,4 +129,5 @@ Q(1:m+1:m*m) = 1;
 b = Q \ v(s.x);
 
 % see (2) in [maday]
-v_hat = @(X) sum(bsxfun(@times, b(:)', apply(s.q, X)), 1);
+%
+v_hat = @(X) sum(bsxfun(@times, b(:)', apply(s.q, X)), 2);
