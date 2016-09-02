@@ -1,4 +1,4 @@
-% TEST_APPLY
+% TEST_APPLY  Unit tests for the apply() function.
 
 addpath('..');
 
