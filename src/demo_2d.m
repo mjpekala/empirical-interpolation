@@ -4,12 +4,13 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-m = 15;
+n_max = 5;
+m = 16;
 
 %% construct a toy function & interpolate
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
-[Omega, U_] = make_domain_2d(5, .02);
+[Omega, U_] = make_domain_2d(n_max, .02);
 
 tic
 [f_interp, s] = interp_magic(f_rescaled, Omega, U_, m);
