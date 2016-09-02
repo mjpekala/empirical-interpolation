@@ -1,5 +1,5 @@
-function [f_interp, s] = interp_magic_2d(v, Omega, U_)
-% INTERP_MAGIC_2D   Interpolate a 2d function using "magic points"
+function [f_interp, s] = interp_magic(v, Omega, U_)
+% INTERP_MAGIC   Interpolate a scalar-valued function using "magic points"
 %
 %   v    : The function to interpolate.  v : R^n -> R.
 %          This code assumes v can handle vector valued inputs (e.g. see apply.m)
@@ -16,13 +16,14 @@ function [f_interp, s] = interp_magic_2d(v, Omega, U_)
     [Omega, U_] = make_domain_2d(5, .02);
     Z = f_rescaled(Omega(:,1), Omega(:,2));
 
-    % visualize (optional)
+    % visualize the function of interest and a basis function (optional)
     n = sqrt(length(Z));
     X = reshape(Omega(:,1), n, n);
     Y = reshape(Omega(:,2), n, n);
     Z = reshape(Z, n, n);
-    surf(X, Y, Z);
-    xlabel('x'); ylabel('y');
+    U1 = reshape(U_{1}(Omega), n, n);
+    figure; surf(X, Y, Z); xlabel('x'); ylabel('y');
+    figure; surf(X, Y, U1); xlabel('x'); ylabel('y'); title('U_1');
 
     % interpolate
     f_interp = interp_magic(f_rescaled, Omega, U_);
@@ -42,16 +43,6 @@ m = (n_max+1)*(n_max+2) / 2;
 
 %% define basis functions u_i
 
-% the code below is just a quick way to enumerate the space:
-%
-%   ii+jj <= n      for 0 <= n <= n_max
-%
-Tmp = tril(ones(n_max+1,n_max+1));
-[ii,jj] = ind2sub(size(Tmp), find(Tmp));
-jj = jj - 1;
-ii = n_max+1-ii;
-assert(length(ii) == m);
-clear Tmp;
 
 % define the basis functions 
 % Currently uses the polynomial basis:
