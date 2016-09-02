@@ -1,12 +1,8 @@
-function [f_interp, s] = interp_magic_2d(v, X, Y, n_max)
+function [f_interp, s] = interp_magic_2d(v, Omega, U_)
 % INTERP_MAGIC_2D   Interpolate a 2d function using "magic points"
 %
-%   v    : The function to interpolate.  v : R^2 -> R.
-%          This code assumes v can handle vector valued inputs (see apply.m)
-%
-%   X, Y : defines the evaluation domain \bar{Omega}.
-%          Specifically, these define a gridding of (a subset of) [-1,1]^2
-%          where X, Y are as obtained from meshgrid.
+%   v    : The function to interpolate.  v : R^n -> R.
+%          This code assumes v can handle vector valued inputs (e.g. see apply.m)
 %
 % References:
 %   Maday et al. "A general multipurpose interpolation procedure:
@@ -16,14 +12,20 @@ function [f_interp, s] = interp_magic_2d(v, X, Y, n_max)
 %{
     % construct a toy function
     f = @(x,y) cos(3*x) .* sin(2*y);
-    x = -pi:.1:pi;
     f_rescaled = @(x,y) f(x*pi,y*pi);
-    
-    [X,Y] = meshgrid(x / pi, x / pi);
-    Z = f_rescaled(X,Y);
-    surf(X,Y,Z);  xlabel('x'); ylabel('y');
-    
-    f_interp = interp_magic_2d(f_rescaled, X, Y, 10);
+    [Omega, U_] = make_domain_2d(5, .02);
+    Z = f_rescaled(Omega(:,1), Omega(:,2));
+
+    % visualize (optional)
+    n = sqrt(length(Z));
+    X = reshape(Omega(:,1), n, n);
+    Y = reshape(Omega(:,2), n, n);
+    Z = reshape(Z, n, n);
+    surf(X, Y, Z);
+    xlabel('x'); ylabel('y');
+
+    % interpolate
+    f_interp = interp_magic(f_rescaled, Omega, U_);
 %}
 
 
