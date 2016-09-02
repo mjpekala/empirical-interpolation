@@ -16,22 +16,11 @@ function A = apply(f_cell, X)
 %
 %    A      := an (m x k) matrix containing all the function evaluations.
 
-%  Example:
-%{
-    f = {};
-    f{1} = @(X) X(:,1) + X(:,2);
-    f{2} = @(X) X(:,1).*X(:,2);
-    f{3} = @(X) X(:,1).^2 + X(:,2).^2;
-    X = [1 1 ; 2 2; 3 3];
-    Z = apply(f, X)
-%}
-
 
 k = length(f_cell);
 [m,n] = size(X);
 
 A = zeros(m,k);
-%parfor kk = 1:k
-for kk = 1:k
+parfor kk = 1:k
     A(:,kk) = feval(f_cell{kk}, X);
 end
