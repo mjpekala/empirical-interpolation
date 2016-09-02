@@ -1,60 +1,29 @@
-function [f_interp, s] = interp_magic(v, Omega, U_)
+function [f_interp, s] = interp_magic(v, Omega, U_, m)
 % INTERP_MAGIC   Interpolate a scalar-valued function using "magic points"
 %
-%   v    : The function to interpolate.  v : R^n -> R.
-%          This code assumes v can handle vector valued inputs (e.g. see apply.m)
+%   v    : The function to interpolate.  v : R^d -> R.
+%          This code assumes v can handle vector valued inputs
+%          (e.g. see apply.m)
+%
+%   Omega : a compact subset of R^d over which v will be modeled.
+%           An (m x d) matrix of m points in d dimensions.
+%   U_    : the function space to use when interpolating 
+%           (a cell array containing at least m function handles).
+%   m     : the number of magic points to use.
 %
 % References:
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-% Example:
-%{
-    % construct a toy function
-    f = @(x,y) cos(3*x) .* sin(2*y);
-    f_rescaled = @(x,y) f(x*pi,y*pi);
-    [Omega, U_] = make_domain_2d(5, .02);
-    Z = f_rescaled(Omega(:,1), Omega(:,2));
 
-    % visualize the function of interest and a basis function (optional)
-    n = sqrt(length(Z));
-    X = reshape(Omega(:,1), n, n);
-    Y = reshape(Omega(:,2), n, n);
-    Z = reshape(Z, n, n);
-    U1 = reshape(U_{1}(Omega), n, n);
-    figure; surf(X, Y, Z); xlabel('x'); ylabel('y');
-    figure; surf(X, Y, U1); xlabel('x'); ylabel('y'); title('U_1');
+%% Check parameters
+assert(0 < m);
+assert(m <= length(U_));
+assert(m <= size(Omega,1));
 
-    % interpolate
-    f_interp = interp_magic(f_rescaled, Omega, U_);
-%}
-
-
-a = min(min(X(:)), min(Y(:)));
-b = max(max(X(:)), max(Y(:)));
+a = min(Omega(:));  b = max(Omega(:));
 if (a < -1) || (b > 1)
-    error('your problem should be rescaled to [-1,1]^2 before calling');
-end
-
-
-% m := number of ("magic") interpolation points
-m = (n_max+1)*(n_max+2) / 2;   
-
-
-%% define basis functions u_i
-
-
-% define the basis functions 
-% Currently uses the polynomial basis:
-%
-%   W_n(Omega) := { (x^i)*(y^j), (x,y) \in Omega, i+j <= n }, 0 <= n <= n_max
-%
-
-% TODO: make U_, Omega parameters so this code can be for any dimension.
-
-U_ = cell(m,1);  % underscore is my notation indicating this is not a matrix
-for kk = 1:m
-    U_{kk} = @(X2d)  X2d(:,1).^ii(kk) .* X2d(:,2).^jj(kk);
+    error('your problem should be rescaled to (a subset of) [-1,1]^2');
 end
 
 
@@ -65,21 +34,23 @@ s.u = {};          % the selected elements of \mathcal{U}
 s.q = {};          % the normalized interpolants
 s.x = zeros(0,2);  % the "magic points" (interpolation points in \Omega)
 
-% the first point is selected in a special way (no interpolant yet)
-Omega = [X(:) Y(:)];
-tmp = abs(apply(u, Omega)); 
-[~,idx] = max(tmp(:));
-[r,c] = ind2sub(size(Omega), idx);
-clear tmp;
+% the first magic point is kind of a special case.
+[s.u{1}, s.x{1}] = choose_next_magic_point(U_, Omega, s);
+s.q{1} = @(X) s.u{1}(X) / s.u{1}(s.x{1});
 
-M(1,:) = Omega(r,:);
-q{1} = @(X) u{c}(X) ./ u{c}(M(1,:));
-interp{1} = make_interpolant(u{c}, M(1,:), q{1});  % =: \mathcal{I}_i
-
-keyboard % TEMP
+% compute the remaining magic points and normalized functions
 for k = 2:m
+    [u_k, x_k] = choose_next_magic_point(U_, Omega, s);
+    I_k = make_interpolant(u_k, s);
+    s.u{k} = u_k;
+    s.x{k} = x_k;
+    s.q{k} = @(X) (u_k(X) - I_k(X)) ./ (u_k(x_k) - I_k(x_k));
 end
 
+
+% Now that we know the magic points, can build a dedicated function
+% for interpolating v.
+f_interp = make_interpolant(v, s);
 
 
 
@@ -120,8 +91,9 @@ for k = 1:length(U_)
 end
 
 
+
 function v_hat = make_interpolant(v, s)
-% MAKE_INTERPOLANT  Returns a function v_hat that interpolates v at the points x.
+% MAKE_INTERPOLANT  Returns a *function* v_hat that interpolates v at the points x.
 %
 %    v :  The function to interpolate;  v : R^d -> R
 %    s :  The magic points interpolation structure 
@@ -135,7 +107,7 @@ assert(size(s.x,1) == m);
 %               to compute any coefficients.
 % See p. 386 in [maday]
 if m == 1
-    v_hat = @(X) v(X)*s.q{1}(X);
+    v_hat = @(X) v(X).*s.q{1}(X);
     return
 end
 
