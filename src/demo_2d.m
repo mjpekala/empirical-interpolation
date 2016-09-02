@@ -4,7 +4,7 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-m = 5;
+m = 15;
 
 %% construct a toy function & interpolate
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
@@ -15,12 +15,15 @@ tic
 [f_interp, s] = interp_magic(f_rescaled, Omega, U_, m);
 toc
 
+
 %% visualize 
 Z = f_rescaled(Omega);
 n = sqrt(length(Z));
+Z = reshape(Z, n, n);
+Zhat = reshape(f_interp(Omega), n, n);
+
 X = reshape(Omega(:,1), n, n);
 Y = reshape(Omega(:,2), n, n);
-Z = reshape(Z, n, n);
 
 figure; 
 surf(X, Y, Z); title('f_true');
@@ -30,8 +33,12 @@ hold off;
 
 
 % the interpolation and error
-Zhat = reshape(f_interp(Omega), n, n);
-figure; surf(X, Y, Zhat); title('$\hat{f}$', 'interpreter', 'latex');
+
+figure; 
+surf(X, Y, Zhat); title('$\hat{f}$', 'interpreter', 'latex');
+hold on;
+stem3(s.x(:,1), s.x(:,2), f_interp(s.x), 'ro');
+hold off;
 
 figure; surf(X, Y, abs(Z-Zhat)), title('error (L2)');
 
