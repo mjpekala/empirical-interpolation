@@ -1,12 +1,8 @@
-function [f_interp, s] = interp_magic(v, Omega, U_, m)
-% INTERP_MAGIC   Interpolate a scalar-valued function using "magic points"
+function [f_interp, s] = interp_magic(Omega, U_, m)
+% INTERP_MAGIC  Chooses "magic points" for interpolation [maday]
 %
-%   v     : The function to interpolate.  v : R^d -> R.
-%           This code assumes v can handle vector valued inputs
-%           (e.g. see apply.m)
-%
-%   Omega : a compact subset of R^d over which v will be modeled.
-%           An (m x d) matrix of m points in d dimensions.
+%   Omega : Interpolation domain; a compact subset of R^d.
+%           An (n x d) matrix of n points in d dimensions.
 %   U_    : the function space to use when interpolating 
 %           (a cell array containing at least m function handles).
 %   m     : the number of magic points to use.
@@ -22,19 +18,53 @@ assert(m <= length(U_));
 assert(m <= size(Omega,1));
 
 a = min(Omega(:));  b = max(Omega(:));
-if (a < -1) || (b > 1)
+if (min(Omega(:)) < -1) || (1 < max(Omega(:)))
     error('your problem should be rescaled to (a subset of) [-1,1]^2');
 end
 
 
-%% determine the q_i functions and the "magic points"
+%% Variables
+[n,d] = size(Omega);
 
-% The magic points interpolation data structure:
-s.u = {};          % the selected elements of \mathcal{U}
-s.q = {};          % the normalized interpolants
-s.x = zeros(0,2);  % the "magic points" (interpolation points in \Omega)
-s.basis = logical(zeros(length(U_),1));
+% s := the empirical interpolation data structure:
+%
+s.u = zeros(m,1);             % active basis functions; an index into U_
+s.x = zeros(m,1);             % interpolation points, encoded as indices into Omega
+s.sf = zeros(m,1);            % scale factors for the q_i
+s.Q = eye(m);                 % Q_{i,j} := q_j(x_i)
 
+% 
+U_all = apply(U_, Omega);     % each u_i evaluated at all points in Omega; (n x b)
+B_all = zeros(m, length(U_)); % the beta coefficients for all u in U_
+
+% 
+Q_all = zeros(n, m);          % the ith column of Q_all is q_i for all points in Omega
+
+keyboard % TEMP
+
+%% determine the q_i functions and the interpolation points
+
+% first point is a kind of special case
+[maxval,idx] = max(abs(U_all));
+[r,c] = ind2sub(size(Z), idx);
+s.u(1) = c;
+s.x(1) = r; 
+s.sf(1) = maxval;
+Q_all(:,1) = U_all(:,s.u(1)) / s.sf(1);
+
+B_all(1,:) = s.v
+
+for jj = 1:m
+    
+end
+
+
+return % TEMP
+
+
+
+
+if 0
 % the first magic point is kind of a special case.
 [s.u{1}, s.x(1,:)] = choose_next_magic_point(U_, Omega, s);
 scale = 1.0 / s.u{1}(s.x(1,:));
@@ -59,6 +89,20 @@ end
 % Now that we know the magic points, can build a dedicated function
 % for interpolating v.
 f_interp = make_interpolant(v, s);
+end
+
+
+function I_k = calc_I_k_all(U_all, s)
+% CALC_I_k_ALL  Computes I_k[u] for all u
+%
+k_max = find(s.u == 0, 1, 'first') - 1;
+assert(k_max > 1);
+
+I_k = zeros(size(U_all));
+
+q_1 = U_all(:,s.u(1)) / s.sf(1);
+Q_k
+
 
 
 
