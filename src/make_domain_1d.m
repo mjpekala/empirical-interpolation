@@ -18,7 +18,7 @@ if nargin < 2, delta=.1; end
 assert(delta > 0);
 assert(n_max > 1);
 
-Omega = -1:delta:1;
+Omega = (-1:delta:1)';
 
 
 W_n = cell(n_max+1,1);
