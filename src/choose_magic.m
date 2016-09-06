@@ -70,9 +70,14 @@ for jj = 2:m
     Q_all(:,jj) = (U_all(:,s.u(jj)) - I_j(:,s.u(jj))) / s.sf(jj); % rescale max err to 1
 
     Q = Q_all(s.x(1:jj), 1:jj);
-    assert(all(all(abs(triu(Q,1)) < 1e-9)));
- 
+    
     % sanity checks
+    err = max(max(abs(triu(Q,1))));
+    if err > 1e-9
+        warning(sprintf('[%s]: upper triangular part of Q had nonzero value with mag %0.2e\n', mfilename, err));
+        Q = tril(Q);
+    end
+    
     assert(abs(Q(jj,jj) - 1) < 1e-8);
     assert(length(unique(s.u(1:jj))) == jj);
  
