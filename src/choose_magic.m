@@ -61,7 +61,9 @@ assert(max(err) < 1e-8);
 
 % II.  Choose the remaining m-1 points
 for jj = 2:m
-    fprintf('[%s]: choosing basis element %d (of %d)\n', mfilename, jj, m);
+    if mod(jj,10) == 0
+        fprintf('[%s]: choosing basis element %d (of %d)\n', mfilename, jj, m);
+    end
     
     % Choose next basis function and interpolation point
     [s.sf(jj), s.x(jj), s.u(jj)] = ell_inf_2d(U_all - I_j);
