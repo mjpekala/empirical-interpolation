@@ -12,12 +12,13 @@ f_rescaled = @(X) f(X*pi);
 [Omega, U_] = make_domain_2d(n_max, .02);
 
 tic
-s = choose_magic(Omega, U_);
+[s, Lambda_M] = choose_magic(Omega, U_);
 toc
 
 tic
 f_hat = interp_magic(f_rescaled, s);
 toc
+fprintf('[%s]: Lambda_M = %0.3f\n', mfilename, Lambda_M);
 
 
 %% visualize 
