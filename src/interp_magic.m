@@ -1,4 +1,11 @@
 function v_hat = interp_magic(v, s)
+% INTERP_MAGIC  Interpolate a function v.
+%
+%   v : the function to interpolate
+%   s : a "magic points" structure, as created by choose_magic()
+%
+%   v_hat : the result of evaluating v at the magic points and then
+%           interpolating for all other points in s.Omega.
 
 % evaluate v at the magic points
 v_magic = v(s.Omega(s.x,:));
