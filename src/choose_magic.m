@@ -31,7 +31,7 @@ end
 s.u = zeros(m,1);             % active basis functions; an index into U_
 s.x = zeros(m,1);             % interpolation points, encoded as indices into Omega
 s.sf = zeros(m,1);            % scale factors for the q_i
-s.Q = zeros(m);               % Q_{i,j} := q_j(x_i)
+Q = zeros(m);                 % Q_{i,j} := q_j(x_i)
 
 % 
 U_all = apply(U_, Omega);     % each u_i evaluated at all points in Omega; (n x b)
@@ -44,7 +44,7 @@ Q_all = zeros(n, m);          % rescaled active basis functions
 % I.  Choose the first interpolation point
 [s.sf(1), s.x(1), s.u(1)] = ell_inf_2d(U_all);
 Q_all(:,1) = U_all(:,s.u(1)) / s.sf(1);
-s.Q(1,1) = 1;
+Q(1,1) = 1;
 
 
 % I_j := Current interpolant of all basis functions 
@@ -62,25 +62,30 @@ for jj = 2:m
     [s.sf(jj), s.x(jj), s.u(jj)] = ell_inf_2d(U_all - I_j);
     Q_all(:,jj) = (U_all(:,s.u(jj)) - I_j(:,s.u(jj))) / s.sf(jj); % rescale max err to 1
 
-    s.Q = Q_all(s.x(1:jj), 1:jj);
-    assert(all(all(abs(triu(s.Q,1)) < 1e-9)));
+    Q = Q_all(s.x(1:jj), 1:jj);
+    assert(all(all(abs(triu(Q,1)) < 1e-9)));
  
     % sanity checks
-    assert(abs(s.Q(jj,jj) - 1) < 1e-8);
+    assert(abs(Q(jj,jj) - 1) < 1e-8);
     assert(length(unique(s.u(1:jj))) == jj);
  
     % update coefficients for each basis function.
     % TODO: rank one update to linear system?
     U_at_magic = U_all(s.x(1:jj), :);
     for kk = 1:size(U_all,2)
-        beta_j_k = s.Q \ U_at_magic(:,kk);
+        beta_j_k = Q \ U_at_magic(:,kk);
         I_j(:,kk) = sum(bsxfun(@times, beta_j_k', Q_all(:,1:jj)), 2);
     end
     
     % the active basis functions should interpolate themselves perfectly
     Err = abs(U_all(:,s.u(1:jj)) - I_j(:,s.u(1:jj)));
-    assert(max(Err(:)) < 1e-8);
+    assert(max(Err(:)) < 1e-9);
 end
+
+% add some data to s before returning
+s.U_ = U_;
+s.Omega = Omega;
+s.Q_all = Q_all;
 
 
 
