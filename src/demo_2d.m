@@ -4,8 +4,7 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-n_max = 5;
-m = 16;
+n_max = 12;
 
 %% construct a toy function & interpolate
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
@@ -13,7 +12,7 @@ f_rescaled = @(X) f(X*pi);
 [Omega, U_] = make_domain_2d(n_max, .02);
 
 tic
-s = choose_magic(Omega, U_, m);
+s = choose_magic(Omega, U_);
 toc
 
 tic
@@ -38,11 +37,10 @@ hold off;
 
 
 % the interpolation and error
-
 figure; 
 surf(X, Y, Z_hat); title('$\hat{f}$', 'interpreter', 'latex');
 hold on;
-stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_rescaled(s.Omega(s.x,:)), 'ro');
 hold off;
 
 figure; surf(X, Y, abs(Z-Z_hat)), title('error (L2)');
