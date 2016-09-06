@@ -1,11 +1,11 @@
-function s = choose_magic(Omega, U_, m)
+function [s, lambda_M] = choose_magic(Omega, U_, m)
 % CHOOSE_MAGIC  Chooses "magic points" for interpolation [maday]
 %
 %   Omega : Interpolation domain; a compact subset of R^d.
 %           An (n x d) matrix of n points in d dimensions.
 %   U_    : the function space to use when interpolating 
 %           (a cell array containing at least m function handles).
-%   m     : the number of magic points to use.
+%   m     : the number of magic points to use (optional).
 %
 % References:
 %   Maday et al. "A general multipurpose interpolation procedure:
@@ -95,6 +95,18 @@ s.U_ = U_;
 s.Omega = Omega;
 s.Q_all = Q_all;
 
+
+% III. calculate lebesgue coefficient (optional)
+% see p.387 in [maday]
+if nargout > 1
+    Q_inv = inv(Q); % XXX: do this without inv()?
+ 
+    lambda_M = 0;
+    for ii=1:length(s.x)
+        h_i = sum(bsxfun(@times, Q_inv(ii,:), s.Q_all), 2);
+        lambda_M = max(lambda_M, max(abs(h_i)));
+    end
+end
 
 
 function [val, row, col] = ell_inf_2d(A)
