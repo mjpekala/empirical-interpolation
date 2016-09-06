@@ -18,7 +18,14 @@ function A = apply(f_cell, X)
 
 
 k = length(f_cell);
+
 [m,n] = size(X);
+
+% special logic for 1d case
+if m == 1, 
+    X = X(:); 
+    [m,n] = size(X);
+end;  
 
 A = zeros(m,k);
 for kk = 1:k
