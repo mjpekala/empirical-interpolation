@@ -30,17 +30,23 @@ Y = reshape(Omega(:,2), n, n);
 Z_hat = reshape(f_hat, n, n);
 
 figure; 
-surf(X, Y, Z); title('f_true');
+surf(X, Y, Z); title('f_{true}');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
 hold off;
 
 
-% the interpolation and error
+% the interpolation and the interpolation error
 figure; 
 surf(X, Y, Z_hat); title('$\hat{f}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_rescaled(s.Omega(s.x,:)), 'ro');
 hold off;
 
-figure; surf(X, Y, abs(Z-Z_hat)), title('error (L2)');
+figure; 
+surf(X, Y, abs(Z-Z_hat)), title('error (L2)');
+colorbar();
+hold on;
+tmp = abs(Z - Z_hat); tmp = tmp(:);
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), tmp(s.x), 'ro');
+hold off;
