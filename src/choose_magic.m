@@ -12,6 +12,9 @@ function s = choose_magic(Omega, U_, m)
 %                 the magic points," CPAA 2009.
 
 
+if nargin < 3, m = length(U_); end
+
+
 %% Check parameters
 assert(0 < m);
 assert(m <= length(U_));
@@ -58,6 +61,8 @@ assert(max(err) < 1e-8);
 
 % II.  Choose the remaining m-1 points
 for jj = 2:m
+    fprintf('[%s]: choosing basis element %d (of %d)\n', mfilename, jj, m);
+    
     % Choose next basis function and interpolation point
     [s.sf(jj), s.x(jj), s.u(jj)] = ell_inf_2d(U_all - I_j);
     Q_all(:,jj) = (U_all(:,s.u(jj)) - I_j(:,s.u(jj))) / s.sf(jj); % rescale max err to 1
