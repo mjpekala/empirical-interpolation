@@ -38,13 +38,13 @@ jj = jj - 1;
 ii = n_max+1-ii;
 assert(length(ii) == m);
 
-% sort (for aesthetics, and so the lowpass filter shows up first)
+% sort (for aesthetics and so the average function appears first)
 s = sum([ii jj], 2);
 [~,idx] = sort(s, 'ascend');
 ii = ii(idx);  jj = jj(idx);
 
 
-W_n = cell(m,1);  % underscore is my notation indicating this is not a matrix
+W_n = cell(m,1);
 for kk = 1:m
     W_n{kk} = @(X2d)  X2d(:,1).^ii(kk) .* X2d(:,2).^jj(kk);
 end
