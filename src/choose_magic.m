@@ -77,9 +77,10 @@ for jj = 2:m
     % update coefficients for each basis function.
     % TODO: rank one update to linear system?
     U_at_magic = U_all(s.x(1:jj), :);
+    Q_jj = Q_all(:,1:jj);
     for kk = 1:size(U_all,2)
         beta_j_k = Q \ U_at_magic(:,kk);
-        I_j(:,kk) = sum(bsxfun(@times, beta_j_k', Q_all(:,1:jj)), 2);
+        I_j(:,kk) = sum(bsxfun(@times, beta_j_k', Q_jj), 2);
     end
     
     % the active basis functions should interpolate themselves perfectly
