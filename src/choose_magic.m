@@ -101,15 +101,19 @@ s.Omega = Omega;
 s.Q_all = Q_all;
 
 
-% III. calculate lebesgue coefficient (optional)
-% see p.387 in [maday]
+% III. approximate lebesgue coefficient (optional)
+%      see p.387 in [maday]
 if nargout > 1
-    Q_inv = inv(Q); % XXX: do this without inv()?
+    Q_inv = inv(Q); 
  
     lambda_M = 0;
     for ii=1:length(s.x)
-        h_i = sum(bsxfun(@times, Q_inv(ii,:), s.Q_all), 2);
+        h_i = s.Q_all * Q_inv(:,ii);
         lambda_M = max(lambda_M, max(abs(h_i)));
+        
+        % it should be the case that h_i(x_j) = \delta_ij
+        deltaij = zeros(size(s.x));  deltaij(ii) = 1;
+        assert(all(abs(deltaij - h_i(s.x))) < 1e-8);
     end
 end
 
