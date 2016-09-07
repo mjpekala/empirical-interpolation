@@ -16,14 +16,13 @@ x = -1:p.delta:1;
 [X,Y] = meshgrid(x, x);
 Omega = [X(:) Y(:)];
 
-
 switch(p.shape)
   case 'square'
     % pass
     
   case 'triangle'
-    bits = sum(Omega,2) <= 1;
-    Omega = Omega(bits,:);
+    bits = sum( (Omega+1)/2, 2) > 1;
+    Omega(bits,:) = [];
 
   otherwise
     error('unsupported shape');
