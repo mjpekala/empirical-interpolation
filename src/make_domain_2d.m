@@ -1,4 +1,4 @@
-function Omega = make_domain_2d(varargin)
+function [Omega, x, y, idx] = make_domain_2d(varargin)
 % MAKE_DOMAIN_2D  Creates a simple 2d domain (compact subset 
 %                 of R^2) for interpolation.
 %
@@ -11,18 +11,18 @@ addParameter(p, 'shape', 'square', @(x) ismember(x, shapes));
 parse(p, varargin{:});
 p = p.Results;
 
+[X,Y] = meshgrid(-1:p.delta:1, -1:p.delta:1);
 
-x = -1:p.delta:1;
-[X,Y] = meshgrid(x, x);
-Omega = [X(:) Y(:)];
+x = X(:);  y = Y(:);  Omega = [x y];
 
 switch(p.shape)
   case 'square'
     % pass
+    idx = 1:length(x);
     
   case 'triangle'
-    bits = sum( (Omega+1)/2, 2) > 1;
-    Omega(bits,:) = [];
+    idx = find(sum((Omega+1)/2, 2) <= 1);
+    Omega = Omega(idx,:);
 
   otherwise
     error('unsupported shape');
