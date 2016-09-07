@@ -6,12 +6,27 @@
 
 n_max = 14;
 
-%% construct a toy function & interpolate
+%% construct a toy function 
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
 
 U_ = make_polynomial_basis(2, n_max);
 [Omega, x, y, idx] = make_domain_2d(.02, 'triangle');
+
+to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
+
+z = NaN*ones(size(x));
+z(idx) = f_rescaled(Omega);
+
+
+figure; 
+mesh(to_square(x), to_square(y), to_square(z));
+xlabel('x'); ylabel('y'); 
+
+title('f_{true}');
+
+
+%% interpolate
 
 tic
 [s, Lambda_M] = choose_magic(Omega, U_);
@@ -22,23 +37,10 @@ tic
 f_hat = interp_magic(f_rescaled, s);
 toc
 
-to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
-
-
-%% visualize 
-
-z = NaN*ones(size(x));
-z(idx) = f_rescaled(Omega);
-
 z_hat = NaN*ones(size(x));
 z_hat(idx) = f_hat;
 
-figure; 
-mesh(to_square(x), to_square(y), to_square(z));
-xlabel('x'); ylabel('y'); title('f_{true}');
 
-
-% the interpolation 
 figure; 
 surf(to_square(x), to_square(y), to_square(z_hat)); 
 xlabel('x'); ylabel('y'); 
