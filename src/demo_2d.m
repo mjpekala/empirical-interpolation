@@ -11,7 +11,7 @@ f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
 
 U_ = make_polynomial_basis(2, n_max);
-Omega = make_domain_2d(.02);
+[Omega, x, y, idx] = make_domain_2d(.02, 'shape', 'triangle');
 
 tic
 [s, Lambda_M] = choose_magic(Omega, U_);
@@ -22,34 +22,38 @@ tic
 f_hat = interp_magic(f_rescaled, s);
 toc
 
+to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
 
 %% visualize 
-Z = f_rescaled(Omega);
-n = sqrt(length(Z));
-Z = reshape(Z, n, n);
 
-X = reshape(Omega(:,1), n, n);
-Y = reshape(Omega(:,2), n, n);
-Z_hat = reshape(f_hat, n, n);
+z = NaN*ones(size(x));
+z(idx) = f_rescaled(Omega);
+
+z_hat = NaN*ones(size(x));
+z_hat(idx) = f_hat;
 
 figure; 
-mesh(X, Y, Z); title('f_{true}');
-hold on;
-stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
-hold off;
+mesh(to_square(x), to_square(y), to_square(z));
+%hold on;
+%stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
+%hold off;
+title('f_{true}');
 
 
-% the interpolation and the interpolation error
+% the interpolation 
 figure; 
-surf(X, Y, Z_hat); title('$\hat{f}$', 'interpreter', 'latex');
+surf(to_square(x), to_square(y), to_square(z_hat)); 
+title('$\hat{f}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_rescaled(s.Omega(s.x,:)), 'ro');
 hold off;
 
+% the interpolation error
 figure; 
-surf(X, Y, abs(Z-Z_hat)), title('error (L2)');
+surf(to_square(x), to_square(y), to_square(abs(z-z_hat)));
+title('error (L2)');
 colorbar();
 hold on;
-tmp = abs(Z - Z_hat); tmp = tmp(:);
-stem3(s.Omega(s.x,1), s.Omega(s.x,2), tmp(s.x), 'ro');
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), ...
+      abs(f_rescaled(Omega(s.x,:))- f_hat(s.x)), 'ro');
 hold off;
