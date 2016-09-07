@@ -4,12 +4,12 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-n_max = 14;
 
 %% construct a toy function 
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
 
+n_max = 14;
 U_ = make_polynomial_basis(2, n_max);
 [Omega, x, y, idx] = make_domain_2d(.02, 'triangle');
 
