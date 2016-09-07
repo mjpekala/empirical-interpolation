@@ -1,21 +1,16 @@
-function [Omega, x, y, idx] = make_domain_2d(varargin)
+function [Omega, x, y, idx] = make_domain_2d(delta, shape)
 % MAKE_DOMAIN_2D  Creates a simple 2d domain (compact subset 
 %                 of R^2) for interpolation.
 %
 
-shapes = {'square', 'triangle'};
+if nargin < 2, shape = 'square'; end
+if nargin < 1, delta = 0.02; end
 
-p = inputParser;
-addOptional(p, 'delta', .02, @(x) x > 0);
-addParameter(p, 'shape', 'square', @(x) ismember(x, shapes));
-parse(p, varargin{:});
-p = p.Results;
-
-[X,Y] = meshgrid(-1:p.delta:1, -1:p.delta:1);
+[X,Y] = meshgrid(-1:delta:1, -1:delta:1);
 
 x = X(:);  y = Y(:);  Omega = [x y];
 
-switch(p.shape)
+switch(shape)
   case 'square'
     % pass
     idx = 1:length(x);

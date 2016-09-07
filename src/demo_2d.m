@@ -11,7 +11,7 @@ f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
 
 U_ = make_polynomial_basis(2, n_max);
-[Omega, x, y, idx] = make_domain_2d(.02, 'shape', 'triangle');
+[Omega, x, y, idx] = make_domain_2d(.02, 'triangle');
 
 tic
 [s, Lambda_M] = choose_magic(Omega, U_);
