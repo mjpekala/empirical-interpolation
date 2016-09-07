@@ -22,7 +22,6 @@ z(idx) = f_rescaled(Omega);
 figure; 
 mesh(to_square(x), to_square(y), to_square(z));
 xlabel('x'); ylabel('y'); 
-
 title('f_{true}');
 
 
