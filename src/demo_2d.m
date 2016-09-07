@@ -24,6 +24,7 @@ toc
 
 to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
 
+
 %% visualize 
 
 z = NaN*ones(size(x));
@@ -34,15 +35,13 @@ z_hat(idx) = f_hat;
 
 figure; 
 mesh(to_square(x), to_square(y), to_square(z));
-%hold on;
-%stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
-%hold off;
-title('f_{true}');
+xlabel('x'); ylabel('y'); title('f_{true}');
 
 
 % the interpolation 
 figure; 
 surf(to_square(x), to_square(y), to_square(z_hat)); 
+xlabel('x'); ylabel('y'); 
 title('$\hat{f}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_rescaled(s.Omega(s.x,:)), 'ro');
@@ -51,9 +50,16 @@ hold off;
 % the interpolation error
 figure; 
 surf(to_square(x), to_square(y), to_square(abs(z-z_hat)));
-title('error (L2)');
+title('error');
 colorbar();
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), ...
       abs(f_rescaled(Omega(s.x,:))- f_hat(s.x)), 'ro');
 hold off;
+
+
+% the magic points
+figure;
+plot(s.Omega(s.x,1), s.Omega(s.x,2), 'x');
+grid on;
+xlabel('x'); ylabel('y'); title('magic point locations');
