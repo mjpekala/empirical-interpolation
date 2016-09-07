@@ -9,7 +9,9 @@ n_max = 14;
 %% construct a toy function & interpolate
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
 f_rescaled = @(X) f(X*pi);
-[Omega, U_] = make_domain_2d(n_max, .02);
+
+U_ = make_polynomial_basis(2, n_max);
+Omega = make_domain_2d(.02);
 
 tic
 [s, Lambda_M] = choose_magic(Omega, U_);
