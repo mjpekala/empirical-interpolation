@@ -102,19 +102,19 @@ s.Q_all = Q_all;
 
 
 % III. approximate lebesgue coefficient (optional)
-%      see p.387 in [maday]
+%      see p.387 in [maday] for definitions.
 if nargout > 1
     Q_inv = inv(Q); 
- 
-    lambda_M = 0;
+
+    H = zeros(size(s.Q_all,1), length(s.x));
     for ii=1:length(s.x)
-        h_i = s.Q_all * Q_inv(:,ii);
-        lambda_M = max(lambda_M, max(abs(h_i)));
+        H(:,ii) = s.Q_all * Q_inv(:,ii);
         
         % it should be the case that h_i(x_j) = \delta_ij
         deltaij = zeros(size(s.x));  deltaij(ii) = 1;
-        assert(all(abs(deltaij - h_i(s.x))) < 1e-8);
+        assert(all(abs(deltaij - H(s.x,ii))) < 1e-8);
     end
+    lambda_M = max(sum(abs(H), 2)); 
 end
 
 
