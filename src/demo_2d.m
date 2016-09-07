@@ -4,7 +4,7 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
-n_max = 12;
+n_max = 14;
 
 %% construct a toy function & interpolate
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
@@ -14,11 +14,11 @@ f_rescaled = @(X) f(X*pi);
 tic
 [s, Lambda_M] = choose_magic(Omega, U_);
 toc
+fprintf('[%s]: Lambda_M = %0.3f\n', mfilename, Lambda_M);
 
 tic
 f_hat = interp_magic(f_rescaled, s);
 toc
-fprintf('[%s]: Lambda_M = %0.3f\n', mfilename, Lambda_M);
 
 
 %% visualize 
@@ -31,7 +31,7 @@ Y = reshape(Omega(:,2), n, n);
 Z_hat = reshape(f_hat, n, n);
 
 figure; 
-surf(X, Y, Z); title('f_{true}');
+mesh(X, Y, Z); title('f_{true}');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_hat(s.x), 'ro');
 hold off;
