@@ -1,2 +1,3 @@
-# magic-surrogates
-An experiment with the "magic points" mechanism for developing interpolation-based surrogates.
+# empirical-interpolation
+
+A few examples of how one might generate surrogates via interpolation-based techniques.
