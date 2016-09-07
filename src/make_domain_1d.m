@@ -14,7 +14,7 @@ function [Omega, W_n] = make_domain_1d(n_max, delta)
 %    Maday et al. "A general multipurpose interpolation procedure:
 %                  the magic points," CPAA 2009.
  
-if nargin < 2, delta=.1; end
+if nargin < 2, delta=.02; end
 assert(delta > 0);
 assert(n_max > 1);
 
