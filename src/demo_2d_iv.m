@@ -36,25 +36,81 @@ mesh(to_square(x), to_square(y), to_square(sigma));
 xlabel('c'); ylabel('k'); 
 title('$\sigma_{true}$', 'interpreter', 'latex');
 
+%% Empirical interpolation
 tic
 [s, Lambda_M] = choose_magic(Omega, W_n);
 toc
 fprintf('[%s]: Lambda_M = %0.3f\n', mfilename, Lambda_M);
 
 tic
-sigma_hat = interp_magic(iv_scaled, s);
+[sigma_hat, sigma_magic] = interp_magic(iv_scaled, s);
 toc
 
-figure; 
+
+
+
+%% Matlab's built-in interpolation
+tic
+sigma_hat_linear = griddata(s.Omega(s.x,1), s.Omega(s.x,2), sigma_magic, ...
+                            s.Omega(:,1), s.Omega(:,2), ...
+                            'linear');
+toc
+
+tic
+sigma_hat_cubic = griddata(s.Omega(s.x,1), s.Omega(s.x,2), sigma_magic, ...
+                            s.Omega(:,1), s.Omega(:,2), ...
+                            'cubic');
+toc
+
+
+%% Visualize fits
+
+figure('Position', [100 100 1200 450]); 
+
+ax1 = subplot(1,3,1);
 mesh(to_square(x), to_square(y), to_square(sigma_hat)); 
 xlabel('c'); ylabel('k'); 
 title('$\hat{\sigma}$', 'interpreter', 'latex');
 hold on;
-stem3(s.Omega(s.x,1), s.Omega(s.x,2), iv_scaled(s.Omega(s.x,:)), 'ro');
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), sigma_magic, 'ro');
 hold off;
 
+ax2 = subplot(1,3,2); 
+mesh(to_square(x), to_square(y), to_square(sigma_hat_linear)); 
+xlabel('c'); ylabel('k'); 
+title('$\hat{\sigma}_{linear}$', 'interpreter', 'latex');
+hold on;
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), sigma_magic, 'ro');
+hold off;
 
-figure; 
+ax3 = subplot(1,3,3);
+mesh(to_square(x), to_square(y), to_square(sigma_hat_cubic)); 
+xlabel('c'); ylabel('k'); 
+title('$\hat{\sigma}_{cubic}$', 'interpreter', 'latex');
+hold on;
+stem3(s.Omega(s.x,1), s.Omega(s.x,2), sigma_magic, 'ro');
+hold off;
+
+linkprop([ax1 ax2 ax3], 'CameraPosition');
+
+
+%% Error analysis
+
+figure('Position', [100 100 1200 450]); 
+
+ax1 = subplot(1,3,1);
 mesh(to_square(x), to_square(y), to_square(abs(sigma - sigma_hat))); 
 xlabel('c'); ylabel('k'); 
-title('err');
+title('err (magic points)');
+
+ax2 = subplot(1,3,2);
+mesh(to_square(x), to_square(y), to_square(abs(sigma - sigma_hat_linear))); 
+xlabel('c'); ylabel('k'); 
+title('err (linear)');
+
+ax3 = subplot(1,3,3);
+mesh(to_square(x), to_square(y), to_square(abs(sigma - sigma_hat_cubic))); 
+xlabel('c'); ylabel('k'); 
+title('err (cubic)');
+
+linkprop([ax1 ax2 ax3], 'CameraPosition');
