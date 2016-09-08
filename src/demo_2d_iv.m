@@ -1,5 +1,7 @@
 % Another 2d example.
 
+% mjp, sept 2016
+
 %% Setup
 c_min = 1.5;  c_max = 3.5;
 K_min = 19;   K_max = 21;
