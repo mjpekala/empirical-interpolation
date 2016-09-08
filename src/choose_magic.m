@@ -11,9 +11,11 @@ function [s, lambda_M] = choose_magic(Omega, U_, m)
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
+% mjp, sept 2016
 
 if nargin < 3, m = length(U_); end
 
+if size(Omega,1) == 1, Omega = Omega(:); end
 
 %% Check parameters
 assert(0 < m);
