@@ -1,4 +1,4 @@
-function v_hat = interp_magic(v, s)
+function [v_hat, v_magic] = interp_magic(v, s)
 % INTERP_MAGIC  Interpolate a function v.
 %
 %   v : the function to interpolate
