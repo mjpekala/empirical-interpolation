@@ -4,7 +4,7 @@ addpath('..');
 
 % 1d case
 f = {};
-f{1} = @(x) 1;
+f{1} = @(x) ones(size(x));
 f{2} = @(x) x;
 f{3} = @(x) x.^2;
 
@@ -23,6 +23,8 @@ f{3} = @(X) X(:,1).^2 + X(:,2).^2;
 X = [1 1 ; 2 2; 3 3];
 
 Z = apply(f, X);
+assert(size(Z,1) == size(X,1));
+assert(size(Z,2) == length(f));
 
 for ii = 1:length(f)
     assert(all(Z(:,ii) == f{ii}(X)));
