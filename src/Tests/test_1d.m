@@ -1,9 +1,13 @@
-% TEST_MAKE_DOMAIN_1d
+% TEST_1d
+
+% mjp, sept 2016
 
 addpath('..')
 
 n_max = 30;
-[Omega, W_n] = make_domain_1d(n_max,.02);
+delta = .02;
+Omega = -1:delta:1;
+W_n = make_polynomial_basis(1, n_max);
 
 figure;
 plot(Omega, W_n{1}(Omega), ...
