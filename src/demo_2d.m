@@ -4,6 +4,8 @@
 %   Maday et al. "A general multipurpose interpolation procedure:
 %                 the magic points," CPAA 2009.
 
+% mjp, sept 2016
+
 
 %% construct a toy function 
 f = @(X) cos(3*X(:,1)) .* sin(2*X(:,2));
