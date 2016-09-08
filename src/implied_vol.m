@@ -11,6 +11,9 @@ function sigma = implied_vol(c, S0, K, r, t)
 %  References:
 %    Hull, "Options, Futures and Other Derivatives," fifth ed.
 
+% mjp, sept 2016
+
+
 if length(c) == 1
     sigma = implied_vol_scalar(c, S0, K, r, t);
 else
