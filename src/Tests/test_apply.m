@@ -1,5 +1,7 @@
 % TEST_APPLY  Unit tests for the apply() function.
 
+% mjp, sept 2016
+
 addpath('..');
 
 % 1d case
