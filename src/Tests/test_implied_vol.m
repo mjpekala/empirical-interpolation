@@ -12,3 +12,7 @@ t = 0.25;
 sigma = implied_vol(c, S0, K, r, t);
 assert(abs(sigma-0.2345) < 1e-4);
 
+sigma = implied_vol([c c], [S0 S0], [K K], [r r], [t t]);
+assert(length(sigma) == 2);
+assert(all(abs(sigma-0.2345) < 1e-4));
+
