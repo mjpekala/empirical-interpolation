@@ -12,6 +12,7 @@ function v_hat = interp_magic(v, s)
 %                 the magic points," CPAA 2009.
 %
 
+% mjp, sept 2016
 
 % evaluate v at the magic points
 v_magic = v(s.Omega(s.x,:));
