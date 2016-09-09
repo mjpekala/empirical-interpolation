@@ -13,16 +13,13 @@ f_rescaled = @(X) f(X*pi);
 
 n_max = 14;
 U_ = make_polynomial_basis(2, n_max);
-[Omega, x, y, idx] = make_domain_2d(.02, 'triangle');
+[Omega, domain_info] = make_domain_2d(.02, 'triangle');
 
-to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
 
-z = NaN*ones(size(x));
-z(idx) = f_rescaled(Omega);
-
+f_true = f_rescaled(Omega);
 
 figure; 
-mesh(to_square(x), to_square(y), to_square(z));
+mesh2(f_true, domain_info);
 xlabel('x'); ylabel('y'); 
 title('f_{true}');
 
@@ -38,21 +35,19 @@ tic
 f_hat = interp_magic(f_rescaled, s);
 toc
 
-z_hat = NaN*ones(size(x));
-z_hat(idx) = f_hat;
-
 
 figure; 
-surf(to_square(x), to_square(y), to_square(z_hat)); 
+mesh2(f_hat, domain_info);
 xlabel('x'); ylabel('y'); 
 title('$\hat{f}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), f_rescaled(s.Omega(s.x,:)), 'ro');
 hold off;
 
-% the interpolation error
+
+%% the interpolation error
 figure; 
-surf(to_square(x), to_square(y), to_square(abs(z-z_hat)));
+mesh2(abs(f_true-f_hat), domain_info);
 title('error');
 colorbar();
 hold on;
@@ -61,7 +56,7 @@ stem3(s.Omega(s.x,1), s.Omega(s.x,2), ...
 hold off;
 
 
-% the magic points
+%% the magic points
 figure;
 plot(s.Omega(s.x,1), s.Omega(s.x,2), 'x');
 grid on;
