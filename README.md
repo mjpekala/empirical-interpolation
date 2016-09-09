@@ -9,3 +9,6 @@ and run *demo_2d* or *demo_2d_iv*.
 ## References
 
 * Maday, Nguyen, Patera and Pau "A general multipurpose interpolation procedure: the magic points," Communications on Pure and Applied Analysis (CPAA) 2009.  [link](https://www.aimsciences.org/journals/displayArticles.jsp?paperID=3753)
+
+
+last edited: September 9, 2016
