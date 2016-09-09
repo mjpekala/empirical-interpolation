@@ -23,6 +23,4 @@ n_max = 10;
 W_n = make_polynomial_basis(2, n_max);
 [Omega, domain_info] = make_domain_2d(delta, 'square');
 
-to_square = @(v) reshape(v, sqrt(numel(x)), sqrt(numel(x)));
-
 compare_methods_2d(iv_scaled, W_n, Omega, domain_info);
