@@ -5,7 +5,8 @@ function compare_methods_2d(v, W_n, Omega, domain_info)
 %% Brute force calculation
 tic
 v_true = v(Omega);
-toc
+t = toc;
+fprintf('[%s]: It took %0.2e seconds to evaluate v at all points in Omega\n', mfilename, t);
 
 plot_mesh = @(v) mesh2(v, domain_info);
 
@@ -18,12 +19,14 @@ title('f_{true}');
 %% Empirical interpolation
 tic
 [s, Lambda_M] = choose_magic(Omega, W_n);
-toc
+t = toc;
+fprintf('[%s]: It took %0.2e seconds to choose magic points\n', mfilename, t);
 fprintf('[%s]: Lambda_M = %0.3f\n', mfilename, Lambda_M);
 
 tic
 [v_hat, v_magic] = interp_magic(v, s);
-toc
+t = toc;
+fprintf('[%s]: It took %0.2e seconds for empirical interpolation\n', mfilename, t);
 
 
 %% Matlab's built-in interpolation
@@ -31,13 +34,15 @@ tic
 v_hat_linear = griddata(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, ...
                         s.Omega(:,1), s.Omega(:,2), ...
                         'linear');
-toc
+t = toc;
+fprintf('[%s]: It took %0.2e seconds to run griddata(linear)\n', mfilename, t);
 
 tic
 v_hat_cubic = griddata(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, ...
                        s.Omega(:,1), s.Omega(:,2), ...
                        'cubic');
-toc
+t = toc;
+fprintf('[%s]: It took %0.2e seconds to run griddata(cubic)\n', mfilename, t);
 
 
 %% TODO: GPML
@@ -93,4 +98,4 @@ plot_mesh(abs(v_true - v_hat_cubic));
 xlabel('c'); ylabel('k'); 
 title('err (cubic)');
 
-linkprop([ax4 ax5 ax6], 'CameraPosition');
+%linkprop([ax4 ax5 ax6], 'CameraPosition');
