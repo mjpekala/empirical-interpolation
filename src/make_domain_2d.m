@@ -1,10 +1,14 @@
-function [Omega, x, y, idx] = make_domain_2d(delta, shape)
+function [Omega, domain_info] = make_domain_2d(delta, shape)
 % MAKE_DOMAIN_2D  Creates a simple 2d domain (compact subset 
 %                 of R^2) for interpolation.
 %
 %  Parameters:
 %    delta : (scalar) spacing in each dimension (assumed isotropic)
 %    shape : shape of the domain; see below for valid options.
+%
+%  Returns:
+%    Omega       : an m x 2 grid of x, y coordinates
+%    domain_info : structure that helps plot irregular domains
 
 % mjp, sept 2016
 
@@ -27,3 +31,7 @@ switch(shape)
   otherwise
     error('unsupported shape');
 end    
+
+domain_info.x = x;
+domain_info.y = y;
+domain_info.idx = idx;
