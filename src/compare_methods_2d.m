@@ -13,7 +13,7 @@ plot_mesh = @(v) mesh2(v, domain_info);
 figure;
 plot_mesh(v_true);
 xlabel('x1'); ylabel('x2'); 
-title('f_{true}');
+title('v_{true}');
 
 
 %% Empirical interpolation
@@ -45,57 +45,56 @@ t = toc;
 fprintf('[%s]: It took %0.2e seconds to run griddata(cubic)\n', mfilename, t);
 
 
-%% TODO: GPML
+%% TODO: GPML (Kriging)
 
 
 %% Visualize fits
 
-figure('Position', [100 100 1200 450]); 
+calc_err = @(A,B) abs(A-B);
 
-ax1 = subplot(1,3,1);
+Err_magic = calc_err(v_true, v_hat);
+Err_cubic = calc_err(v_true, v_hat_cubic);
+err_max = max([ Err_magic(:) ; Err_cubic(:)]);
+
+
+% empirical interpolation
+figure('Position', [100 100 1000 500]); 
+
+ax1 = subplot(1,2,1);
 plot_mesh(v_hat);
 xlabel('c'); ylabel('k'); 
-title('$\hat{\sigma}$', 'interpreter', 'latex');
+title('$\hat{v}_{magic}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
 hold off;
 
-ax2 = subplot(1,3,2); 
-plot_mesh(v_hat_linear);
+
+ax2 = subplot(1,2,2);
+plot_mesh(Err_magic);
+caxis([0 err_max]);
 xlabel('c'); ylabel('k'); 
-title('$\hat{\sigma}_{linear}$', 'interpreter', 'latex');
-hold on;
-stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
-hold off;
+title(sprintf('err (magic points): %0.2e', sum(Err_magic(:))));
 
-ax3 = subplot(1,3,3);
+linkprop([ax1 ax2], 'CameraPosition');
+
+
+% triangulation + cubic interpolation
+figure('Position', [100 100 1000 500]); 
+
+ax3 = subplot(1,2,1);
 plot_mesh(v_hat_cubic);
 xlabel('c'); ylabel('k'); 
-title('$\hat{\sigma}_{cubic}$', 'interpreter', 'latex');
+title('$\hat{v}_{cubic}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
 hold off;
 
-linkprop([ax1 ax2 ax3], 'CameraPosition');
 
-
-%% Error analysis
-
-figure('Position', [100 100 1200 450]); 
-
-ax4 = subplot(1,3,1);
-plot_mesh(abs(v_true - v_hat));
+ax4 = subplot(1,2,2);
+plot_mesh(Err_cubic);
+caxis([0 err_max]);
 xlabel('c'); ylabel('k'); 
-title('err (magic points)');
+title(sprintf('err (cubic): %0.2e', sum(Err_cubic(:))));
 
-ax5 = subplot(1,3,2);
-plot_mesh(abs(v_true - v_hat_linear));
-xlabel('c'); ylabel('k'); 
-title('err (linear)');
+linkprop([ax3 ax4], 'CameraPosition');
 
-ax6 = subplot(1,3,3);
-plot_mesh(abs(v_true - v_hat_cubic));
-xlabel('c'); ylabel('k'); 
-title('err (cubic)');
-
-%linkprop([ax4 ax5 ax6], 'CameraPosition');
