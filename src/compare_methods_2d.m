@@ -6,7 +6,7 @@ function compare_methods_2d(v, W_n, Omega, domain_info)
 tic
 v_true = v(Omega);
 t = toc;
-fprintf('[%s]: It took %0.2e seconds to evaluate v at all points in Omega\n', mfilename, t);
+fprintf('[%s]: It took %0.2e seconds to evaluate v() at all points in Omega\n', mfilename, t);
 
 plot_mesh = @(v) mesh2(v, domain_info);
 
@@ -56,11 +56,17 @@ Err_magic = calc_err(v_true, v_hat);
 Err_cubic = calc_err(v_true, v_hat_cubic);
 err_max = max([ Err_magic(:) ; Err_cubic(:)]);
 
+% show magic points
+figure;
+scatter(s.Omega(s.x,1), s.Omega(s.x,2), 'ro');
+xlabel('x1'); ylabel('x2');
+title('interpolation points')
+
 
 % empirical interpolation
 figure;
 plot_mesh(v_hat);
-xlabel('c'); ylabel('k'); 
+xlabel('x1'); ylabel('x2'); 
 title('$\hat{v}_{magic}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
@@ -70,7 +76,7 @@ hold off;
 figure;
 plot_mesh(Err_magic);
 caxis([0 err_max]);
-xlabel('c'); ylabel('k'); 
+xlabel('x1'); ylabel('x2');
 title(sprintf('err (magic points): %0.2e', sum(Err_magic(:))));
 
 %linkprop([ax1 ax2], 'CameraPosition');
@@ -80,7 +86,7 @@ title(sprintf('err (magic points): %0.2e', sum(Err_magic(:))));
 
 figure;
 plot_mesh(v_hat_cubic);
-xlabel('c'); ylabel('k'); 
+xlabel('x1'); ylabel('x2'); 
 title('$\hat{v}_{cubic}$', 'interpreter', 'latex');
 hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
@@ -89,5 +95,5 @@ hold off;
 figure;
 plot_mesh(Err_cubic);
 caxis([0 err_max]);
-xlabel('c'); ylabel('k'); 
+xlabel('x1'); ylabel('x2'); 
 title(sprintf('err (cubic): %0.2e', sum(Err_cubic(:))));
