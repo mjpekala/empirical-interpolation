@@ -9,4 +9,4 @@ z(domain_info.idx) = z_subset;
 n = sqrt(numel(domain_info.x));
 to_square = @(v) reshape(v, n, n);
 
-h = mesh(to_square(domain_info.x), to_square(domain_info.y), to_square(z));
+h = meshc(to_square(domain_info.x), to_square(domain_info.y), to_square(z));
