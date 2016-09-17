@@ -58,9 +58,7 @@ err_max = max([ Err_magic(:) ; Err_cubic(:)]);
 
 
 % empirical interpolation
-figure('Position', [100 100 1000 500]); 
-
-ax1 = subplot(1,2,1);
+figure;
 plot_mesh(v_hat);
 xlabel('c'); ylabel('k'); 
 title('$\hat{v}_{magic}$', 'interpreter', 'latex');
@@ -69,19 +67,18 @@ stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
 hold off;
 
 
-ax2 = subplot(1,2,2);
+figure;
 plot_mesh(Err_magic);
 caxis([0 err_max]);
 xlabel('c'); ylabel('k'); 
 title(sprintf('err (magic points): %0.2e', sum(Err_magic(:))));
 
-linkprop([ax1 ax2], 'CameraPosition');
+%linkprop([ax1 ax2], 'CameraPosition');
 
 
 % triangulation + cubic interpolation
-figure('Position', [100 100 1000 500]); 
 
-ax3 = subplot(1,2,1);
+figure;
 plot_mesh(v_hat_cubic);
 xlabel('c'); ylabel('k'); 
 title('$\hat{v}_{cubic}$', 'interpreter', 'latex');
@@ -89,12 +86,8 @@ hold on;
 stem3(s.Omega(s.x,1), s.Omega(s.x,2), v_magic, 'ro');
 hold off;
 
-
-ax4 = subplot(1,2,2);
+figure;
 plot_mesh(Err_cubic);
 caxis([0 err_max]);
 xlabel('c'); ylabel('k'); 
 title(sprintf('err (cubic): %0.2e', sum(Err_cubic(:))));
-
-linkprop([ax3 ax4], 'CameraPosition');
-
