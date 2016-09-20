@@ -46,7 +46,7 @@ else
     X(5,:) = t;
 
     % Note: I don't think fzero can solve multiple problems in parallel.
-    %       Could parfor here, but probably not worth the overhead.
+    %       If n is large, could invoke parfor...
     for ii = 1:n
         xi = X(:,ii);
         f = @(x) f_sigma(x, xi(1), xi(2), xi(3), xi(4), xi(5));
