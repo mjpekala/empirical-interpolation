@@ -12,10 +12,9 @@ function sigma = implied_vol_scalar(c, S0, K, r, t)
 %    Hull, "Options, Futures and Other Derivatives," fifth
 %    ed. Chapter 12, equations 12.20, 12.21.
 
-% TODO: a more general initial guess
 
 f = @(x) raw_calc(x, c, S0, K, r, t);
-sigma = fzero(f, 0.2);
+sigma = fzero(f, 0.2);  % TODO: a more general initial guess
 
 
 function rv = raw_calc(sigma, c, S0, K, r, t)
