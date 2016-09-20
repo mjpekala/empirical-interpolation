@@ -13,11 +13,11 @@ r = 0.1;
 t = 0.25;
 
 % scalar case
-sigma = implied_vol_scalar(c, S0, K, r, t);
+sigma = implied_vol(c, S0, K, r, t);
 assert(abs(sigma-0.2345) < 1e-4);
 
 % vector case
-sigma = implied_vol([c c], [S0 S0], [K K], [r r], [t t]);
+sigma = implied_vol([c c], S0, [K K], r, t);
 assert(length(sigma) == 2);
 assert(all(abs(sigma-0.2345) < 1e-4));
 
