@@ -22,15 +22,3 @@ else
         sigma(ii) = implied_vol_scalar(c(ii), S0(ii), K(ii), r(ii), t(ii));
     end
 end
-
-
-
-function sigma = implied_vol_scalar(c, S0, K, r, t)
-% IMPLIED_VOL_SCALAR  Determines a single implied volatility value.
-
-% see 12.20, 12.21 in [hull]
-d1 = @(sigma) (log(S0/K) + (r + sigma^2/2)*t) / (sigma * sqrt(t));
-d2 = @(sigma) d1(sigma) - sigma * sqrt(t);
-f = @(sigma) S0*normcdf(d1(sigma)) - K*exp(-r*t)* normcdf(d2(sigma)) - c;
-
-sigma = fzero(f, 0.2);
