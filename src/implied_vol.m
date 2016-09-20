@@ -11,6 +11,16 @@ function sigma = implied_vol(c, S0, K, r, t)
 %     r  : risk free interest rate
 %     t  : option expiration time (relative to t0)
 %
+%  Examples:
+%    scalar case:
+%       sigma = implied_vol(1.875, 21, 20, 0.1, 0.25);
+%    vector case:
+%       sigma = implied_vol(1.875, 19:21, 20, 0.1, 0.25);
+%
+%  Note that if you would like to evaluate at a matrix of points
+%  (e.g. via meshgrid) you'll need to reshape the points into columns
+%  and then reshape back to matrices after calling.
+%
 %  References:
 %    Hull, "Options, Futures and Other Derivatives," fifth ed.
 
