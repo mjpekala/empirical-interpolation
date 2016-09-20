@@ -12,16 +12,26 @@ K = 20;
 r = 0.1;
 t = 0.25;
 
-sigma = implied_vol(c, S0, K, r, t);
+% scalar case
+sigma = implied_vol_scalar(c, S0, K, r, t);
 assert(abs(sigma-0.2345) < 1e-4);
 
+% vector case
 sigma = implied_vol([c c], [S0 S0], [K K], [r r], [t t]);
 assert(length(sigma) == 2);
 assert(all(abs(sigma-0.2345) < 1e-4));
 
 
-%% an example of evaluating multiple points
+%% for profiling
+tic
+for ii = 1:3000
+    sigma = implied_vol_scalar(c, S0, K, r, t);
+end
+toc
 
+
+%% an example of evaluating multiple points
+%{
 c_vals = (0:.1:6)';
 K_vals = (18:.1:25)';
 
@@ -39,4 +49,4 @@ fprintf('[%s]: time to calculate %d values: %0.2f sec\n', mfilename, numel(onez)
 Z = reshape(sigma, size(C_mat,1), size(C_mat,2));
 figure; mesh(C_mat,K_mat,Z);
 xlabel('c'); ylabel('k');
-
+%}
