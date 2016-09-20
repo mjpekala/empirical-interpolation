@@ -24,21 +24,26 @@ if n == 1
 else
     % Vector input case.
     %
+    sigma = zeros(n,1);
+    
+    % setting X up this way works for mixed vector/scalar inputs
+    % (as long as all vector inputs are same size).
+    X = zeros(5,n);
+    X(1,:) = c;
+    X(2,:) = S0;
+    X(3,:) = K;
+    X(4,:) = r;
+    X(5,:) = t;
+
     % Note: I don't think fzero can solve multiple problems in parallel.
     %       Could parfor here, but probably not worth the overhead.
-    sigma = zeros(n,1);
-
     for ii = 1:n
-        f = @(x) f_sigma(x, ...
-                         c(min(numel(c),ii)), ...
-                         S0(min(numel(S0),ii)), ...
-                         K(min(numel(K),ii)), ...
-                         r(min(numel(r),ii)), ...
-                         t(min(numel(t),ii)));
+        xi = X(:,ii);
+        f = @(x) f_sigma(x, xi(1), xi(2), xi(3), xi(4), xi(5));
         if ii == 1
             sigma(ii) = fzero(f, 0.2);
         else
-            sigma(ii) = fzero(f, sigma(ii-1));
+            sigma(ii) = fzero(f, sigma(ii-1)); % improved initial guess 
         end
     end
 end
