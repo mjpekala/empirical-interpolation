@@ -22,16 +22,8 @@ assert(length(sigma) == 2);
 assert(all(abs(sigma-0.2345) < 1e-4));
 
 
-%% for profiling
-tic
-for ii = 1:3000
-    sigma = implied_vol_scalar(c, S0, K, r, t);
-end
-toc
-
-
 %% an example of evaluating multiple points
-%{
+
 c_vals = (0:.1:6)';
 K_vals = (18:.1:25)';
 
@@ -46,7 +38,9 @@ tic
 sigma = implied_vol(C_mat(:), S0, K_mat(:), r, t);
 fprintf('[%s]: time to calculate %d values: %0.2f sec\n', mfilename, numel(onez), toc);
 
-Z = reshape(sigma, size(C_mat,1), size(C_mat,2));
-figure; mesh(C_mat,K_mat,Z);
-xlabel('c'); ylabel('k');
-%}
+if 1
+    Z = reshape(sigma, size(C_mat,1), size(C_mat,2));
+    figure; mesh(C_mat,K_mat,Z);
+    xlabel('c'); ylabel('k');
+end
+
