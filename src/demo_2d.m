@@ -23,6 +23,6 @@ else
     plot(m_vals, err_ell_inf(:,1), 'o-', m_vals, err_ell_inf(:,2), 'o-');
     legend('magic points', 'griddata');
     xlabel('m'); ylabel('err ell_inf');
-    title('ell_infty error for implied vol example');
+    title('ell_infty error for triangular domain sinusoid example');
 end
 
