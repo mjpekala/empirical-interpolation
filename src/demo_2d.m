@@ -13,12 +13,12 @@ f_rescaled = @(X) f(X*pi);
 
 n_max = 14;
 
-if 0
+if 1
     W_n = make_polynomial_basis(2, n_max);
     [Omega, domain_info] = make_domain_2d(.02, 'triangle');
     compare_methods_2d(f_rescaled, W_n, Omega, domain_info);
 else
-    [m_vals, err_ell_inf] = error_analysis_2d(iv_scaled, n_max, .01);
+    [m_vals, err_ell_inf] = error_analysis_2d(f_rescaled, n_max, .01);
     figure;
     plot(m_vals, err_ell_inf(:,1), 'o-', m_vals, err_ell_inf(:,2), 'o-');
     legend('magic points', 'griddata');
